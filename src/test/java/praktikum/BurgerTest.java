@@ -20,14 +20,17 @@ public class BurgerTest {
     public void setBunsMethodIsCalled(){
         Bun bun = new Bun("black bun", 100);
         burger.setBuns(bun);
-        Mockito.verify(burger).setBuns(Mockito.any());
+        Mockito.verify(burger).setBuns(bun);
     }
 
     @Test
     public void addIngredientMethodIsCalled(){
+        Burger burger = new Burger();
         Ingredient ingredient = new Ingredient (IngredientType.SAUCE, "hot sauce", 100);
+        List<Ingredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient);
         burger.addIngredient(ingredient);
-        Mockito.verify(burger).addIngredient(Mockito.any());
+        Assert.assertEquals(false, burger.ingredients.isEmpty());
     }
 
     @Test
@@ -53,29 +56,28 @@ public class BurgerTest {
         burger.addIngredient(ingredient2);
         burger.moveIngredient(1, 0);
 
-        Ingredient firstPosition = burger.ingredients.get(0);
-        String str = firstPosition.getName();
-        Assert.assertEquals("cold sauce", str);
+        Ingredient primaryIngredientInBurgerIngredientsList = burger.ingredients.get(0);
+        String nameOfPrimaryIngredient = primaryIngredientInBurgerIngredientsList.getName();
+        Assert.assertEquals("cold sauce", nameOfPrimaryIngredient);
     }
-
-    @Mock
-    Bun bun;
 
     @Test
     public void getPriceReturnCorrectPrice(){
         Burger burger = new Burger();
+        Bun bun = new Bun("black bun", 100);
         Ingredient ingredient = new Ingredient (IngredientType.SAUCE, "hot sauce", 100);
         List<Ingredient> ingredients = new ArrayList<>();
         ingredients.add(ingredient);
         burger.setBuns(bun);
         burger.addIngredient(ingredient);
 
-        Mockito.when(bun.getPrice()).thenReturn(100.00f);
-
         float actual = burger.getPrice();
         float expected = 300.00f;
         Assert.assertEquals(expected, actual, 0);
     }
+
+    @Mock
+    Bun bun;
 
     @Test
     public void receiptIsCorrect(){
@@ -89,11 +91,11 @@ public class BurgerTest {
         Mockito.when(bun.getPrice()).thenReturn(100.00f);
         Mockito.when(bun.getName()).thenReturn("black bun");
 
-        String str = burger.getReceipt();
-        Assert.assertTrue("(==== black bun ====)\n" +
-                "= sauce hot sauce =\n" +
-                "(==== black bun ====)\n" +
-                "\n" +
-                "Price: 300,000000", true);
+        String receiptText = burger.getReceipt();
+        Assert.assertEquals("(==== black bun ====)\r\n" +
+                "= sauce hot sauce =\r\n" +
+                "(==== black bun ====)\r\n" +
+                "\r\n" +
+                "Price: 300,000000\r\n", receiptText);
     }
 }
